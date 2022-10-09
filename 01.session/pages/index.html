@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Page</title>
+  <script src="./jquery.js"></script>
+</head>
+
+<body>
+  <h1>Hope Page</h1>
+
+  <button id="btnLogout">Log out</button>
+
+  <script>
+    $(function () {
+
+      // Automatically initiate a request for the user's name once the page has loaded
+      $.get('/api/username', function (res) {
+        // A status of 0 means that the acquisition of the user name was successful; 
+        //otherwise it means that the acquisition of the user name failed!
+        if (res.status !== 0) {
+          alert('You are not logged in, please login to perform this action!')
+          location.href = './login.html'
+        } else {
+          alert('Welcome：' + res.username)
+        }
+      })
+
+      // Click the button to log out
+      $('#btnLogout').on('click', function () {
+        // Initiate a POST request to log out
+        $.post('/api/logout', function (res) {
+          if (res.status === 0) {
+            // If status is 0, then the logout is successful 
+            //and you are redirected to the login page
+            location.href = './login.html'
+          }
+        })
+      })
+    })
+  </script>
+</body>
+
+</html>

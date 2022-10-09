@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <script src="./jquery.js"></script>
+</head>
+
+<body>
+  <!-- Login form -->
+  <form id="form1">
+    <div>Account：<input type="text" name="username" autocomplete="off" /></div>
+    <div>Password：<input type="password" name="password" /></div>
+    <button>Logon</button>
+  </form>
+
+  <script>
+    $(function () {
+      // Listening for form submission events
+      $('#form1').on('submit', function (e) {
+        // Blocking default submission behaviour
+        e.preventDefault()
+        // Initiating a POST login request
+        $.post('/api/login', $(this).serialize(), function (res) {
+          // A status of 0 indicates a successful login; otherwise, a failed login!
+          if (res.status === 0) {
+            location.href = './index.html'
+          } else {
+            alert('Login failed！')
+          }
+        })
+      })
+    })
+  </script>
+</body>
+
+</html>

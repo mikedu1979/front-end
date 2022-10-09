@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 100%;
+            min-width: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #eee;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Create a drawing board -->
+    <canvas width="800" height="500" style="background-color:antiquewhite"></canvas>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        //get drawing board
+        const can = document.querySelector('canvas')
+        //Get Brush
+        const ctx = can.getContext('2d');
+        //create message object
+        const msg = {
+            //Used to record if it is the first click
+            isDown: false
+        }
+
+        //Send a message to the server at the click of a mouse
+        can.onmousedown = e => {
+            console.log('e', e)
+            msg.isDown = true;
+            msg.x = e.offsetX;
+            msg.y = e.offsetY;
+            //Send objects to the server
+            socket.emit('message', msg);
+            //Listening to mouse movement events
+            document.onmousedown = ev => {
+                msg.isDown = false;
+                msg.x = e.offsetX;
+                msg.y = e.offsetY;
+                socket.emit('message', msg);
+            }
+        }
+        //Cancel mouse-over event after mouse release
+        can.onmouseup=()=>{
+            document.onmousemove=null;
+        }
+        //Client listens to broadcasts
+        socket.on('message',msg=>{
+            console.log('message',msg)
+            //Draw here
+            const{isDown,x,y}=msg;
+            //Is not the first time to click under
+            if(isDown){
+                ctx.beginPath()
+                ctx.moveTo(x,y)
+
+            }else{
+                ctx.lineTo(x,y)
+                //Fill Color
+                ctx.stroke()
+            }
+
+
+        })
+    </script>
+</body>
+
+</html>
